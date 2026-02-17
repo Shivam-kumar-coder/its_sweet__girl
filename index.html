@@ -22,10 +22,10 @@
     top: 0; left: 0;
   }
 
-  /* Likhavat ko thoda niche aur center me rakha hai */
+  /* Likhavat Center ke paas aur sundar */
   #text-container {
     position: absolute;
-    bottom: 20%; 
+    top: 25%; /* Niche se hata kar upar/center me kiya taaki ped dikhe */
     left: 0;
     width: 100%;
     text-align: center;
@@ -35,18 +35,16 @@
 
   #typewriter {
     font-family: 'Dancing Script', cursive;
-    font-size: clamp(28px, 8vw, 45px);
-    color: #ff85a1; /* Pyara Pink Color */
-    text-shadow: 0 0 15px #ff4d6d, 0 0 30px #ff0040;
+    font-size: clamp(30px, 10vw, 50px);
+    color: #ff85a1; /* Pyara Pink color */
+    text-shadow: 0 0 10px #ff4d6d, 0 0 20px #ff0040;
     display: inline-block;
-    min-height: 1.2em;
   }
 
-  /* Start Screen jo pakka Tap kaam karega */
+  /* Start Screen jo pakka kaam karegi */
   #start-screen {
     position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
+    inset: 0;
     background: radial-gradient(circle, #200005 0%, #000 100%);
     color: #ff4d6d;
     display: flex;
@@ -54,6 +52,7 @@
     align-items: center;
     justify-content: center;
     z-index: 999;
+    text-align: center;
     cursor: pointer;
   }
 
@@ -71,6 +70,7 @@
     letter-spacing: 3px;
     margin-top: 30px;
     color: #ffb3c1;
+    font-weight: bold;
   }
 </style>
 </head>
@@ -79,7 +79,7 @@
 
 <div id="start-screen" onclick="startExperience()">
   <div class="heart-main">❤️</div>
-  <div class="tap-text">TAP FOR SWEET GIRL</div>
+  <div class="tap-text">TAP FOR sweet girl</div>
 </div>
 
 <canvas id="bgCanvas"></canvas>
@@ -111,7 +111,6 @@ function resize() {
 window.addEventListener("resize", resize);
 resize();
 
-// Dher saare hearts aur sparkles
 class Heart {
   constructor() {
     this.reset();
@@ -119,15 +118,15 @@ class Heart {
   reset() {
     this.x = Math.random() * bgCanvas.width;
     this.y = bgCanvas.height + 20;
-    this.size = Math.random() * 15 + 8;
+    this.size = Math.random() * 15 + 10;
     this.speedY = -(Math.random() * 1 + 0.5);
     this.opacity = Math.random() * 0.7 + 0.3;
-    const icons = ["❤️", "💖", "✨", "🌸"];
+    const icons = ["❤️", "💖", "🌸", "✨"];
     this.icon = icons[Math.floor(Math.random() * icons.length)];
   }
   update() {
     this.y += this.speedY;
-    if (this.y < -20) this.reset();
+    if (this.y < -30) this.reset();
   }
   draw() {
     bgCtx.globalAlpha = this.opacity;
@@ -137,25 +136,19 @@ class Heart {
 }
 
 function startExperience() {
-  // Screen hatane ka naya tarika taaki hang na ho
-  document.getElementById("start-screen").style.opacity = "0";
-  setTimeout(() => {
-    document.getElementById("start-screen").style.display = "none";
-  }, 500);
-
+  document.getElementById("start-screen").style.display = "none";
   document.getElementById("music").play().catch(() => {});
 
-  // 40 Hearts for better feel
+  // Dher saare hearts (40 items)
   for(let i=0; i<40; i++) floatingHearts.push(new Heart());
 
   const isMobile = window.innerWidth < 600;
-  // Ped ab center se thoda niche shuru hoga
-  const treeX = tCanvas.width / 2;
-  const treeY = tCanvas.height * 0.85;
+  const startX = tCanvas.width / 2;
+  const startY = tCanvas.height * 0.88;
   const branchLen = isMobile ? tCanvas.height * 0.12 : tCanvas.height * 0.18;
 
-  // depth 11 matlab bahut ghana ped
-  initTree(treeX, treeY, branchLen, -90, 11);
+  // Tree depth 10 (Ghana ped)
+  initTree(startX, startY, branchLen, -90, 10);
   
   animate();
   setTimeout(typeWriter, 1500); 
@@ -168,7 +161,22 @@ function initTree(x, y, len, angle, depth) {
     let ny = y + Math.sin(rad) * len;
 
     tCtx.beginPath();
-    // Pink, Red aur Dark Maroon ka mix
-    if(depth > 7) tCtx.strokeStyle = "#4a000e"; // Root
-    else if(depth > 4) tCtx.strokeStyle = "#ff0040"; // Mid
-    else tCtx.strokeStyle = "#ff85a1"; // Top
+    // Pink aur Red Mix color logic
+    if (depth < 4) tCtx.strokeStyle = "#ff85a1"; // Top Pink
+    else if (depth < 7) tCtx.strokeStyle = "#ff4d6d"; // Middle hot pink
+    else tCtx.strokeStyle = "#5e0012"; // Bottom dark red
+
+    tCtx.lineWidth = depth * 1.2;
+    tCtx.lineCap = "round";
+    tCtx.moveTo(x, y);
+    tCtx.lineTo(nx, ny);
+    tCtx.stroke();
+
+    if (depth > 0) {
+      initTree(nx, ny, len * 0.76, angle - 22, depth - 1);
+      initTree(nx, ny, len * 0.76, angle + 25, depth - 1);
+    } else {
+      // Ped ke patte
+      tCtx.fillStyle = Math.random() > 0.5 ? "#ff4d6d" : "#ffb3c1";
+      tCtx.beginPath();
+      tCtx.arc(nx, ny, Math.random() * 4 + 2, 0, Math.PI * 2);
