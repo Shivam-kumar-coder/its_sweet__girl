@@ -3,65 +3,78 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-<title>it's__sweet_girl❤️</title>
+<title>Sweet Girl ❤️</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap');
 
   body, html {
     margin: 0; padding: 0;
     width: 100%; height: 100%;
-    background: #050002; /* Black with a hint of pink */
+    background: #000;
     overflow: hidden;
     touch-action: none;
   }
 
   canvas { position: absolute; top: 0; left: 0; }
 
+  /* Text ko center ke paas rakha hai */
   #text-container {
     position: absolute;
-    bottom: 10%; 
+    top: 25%; 
     left: 0;
     width: 100%;
     text-align: center;
-    z-index: 20;
+    z-index: 50;
+    pointer-events: none;
   }
 
   #typewriter {
     font-family: 'Dancing Script', cursive;
-    font-size: clamp(30px, 9vw, 45px);
-    color: #ff85a1; /* Soft Pink */
-    text-shadow: 0 0 10px #ff4d6d, 0 0 20px #ff0040;
+    font-size: clamp(32px, 12vw, 55px);
+    color: #ffb3c1;
+    text-shadow: 0 0 15px #ff4d6d, 0 0 30px #ff0040;
     display: inline-block;
-    border-right: 2px solid #ff85a1;
   }
 
   #start-screen {
     position: fixed;
     inset: 0;
-    background: radial-gradient(circle, #2b0010 0%, #000 100%);
-    color: #ff85a1;
+    background: radial-gradient(circle, #38000a 0%, #000 100%);
+    color: #ff4d6d;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     z-index: 100;
+    text-align: center;
   }
 
   .heart-main {
-    font-size: 90px;
-    filter: drop-shadow(0 0 15px #ff4d6d);
-    animation: pulse 1.5s infinite ease-in-out;
+    font-size: 110px;
+    filter: drop-shadow(0 0 25px #ff0040);
+    animation: pulse 1.3s infinite ease-in-out;
     cursor: pointer;
   }
 
-  @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+  @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.2); } }
+
+  .tap-text {
+    font-family: sans-serif;
+    font-size: 16px;
+    letter-spacing: 4px;
+    margin-top: 40px;
+    font-weight: bold;
+    color: #ffb3c1;
+    text-shadow: 0 0 5px #ff4d6d;
+  }
 </style>
 </head>
+
 <body>
 
 <div id="start-screen" onclick="startExperience()">
-  <div class="heart-main">💖</div>
-  <p style="font-family: sans-serif; letter-spacing: 2px; font-size: 12px; opacity: 0.7;">CLICK TO START</p>
+  <div class="heart-main">❤️</div>
+  <div class="tap-text">TAP FOR SWEET GIRL</div>
 </div>
 
 <canvas id="bgCanvas"></canvas>
@@ -81,7 +94,7 @@ const bgCtx = bgCanvas.getContext("2d");
 const tCanvas = document.getElementById("treeCanvas");
 const tCtx = tCanvas.getContext("2d");
 
-let message = "it's_sweet ♥️ Anjali";
+let message = "it's_sweet ❤️ Anjali";
 let treeQueue = [];
 let textIndex = 0;
 let floatingHearts = [];
@@ -93,20 +106,21 @@ function resize() {
 window.addEventListener("resize", resize);
 resize();
 
-// Floating Pink Hearts & Choco
 class Heart {
   constructor() { this.reset(); }
   reset() {
     this.x = Math.random() * bgCanvas.width;
-    this.y = bgCanvas.height + 20;
-    this.size = Math.random() * 12 + 6;
-    this.speedY = -(Math.random() * 0.8 + 0.3);
-    this.opacity = Math.random() * 0.5 + 0.3;
-    this.char = Math.random() > 0.4 ? "🌸" : "💖";
+    this.y = bgCanvas.height + 50;
+    this.size = Math.random() * 18 + 10;
+    this.speedY = -(Math.random() * 1.5 + 0.8);
+    this.opacity = Math.random() * 0.8 + 0.2;
+    // Mix of different love symbols
+    const items = ["❤️", "💖", "✨", "🌸", "💕"];
+    this.char = items[Math.floor(Math.random() * items.length)];
   }
   update() {
     this.y += this.speedY;
-    if (this.y < -20) this.reset();
+    if (this.y < -50) this.reset();
   }
   draw() {
     bgCtx.globalAlpha = this.opacity;
@@ -119,14 +133,18 @@ function startExperience() {
   document.getElementById("start-screen").style.display = "none";
   document.getElementById("music").play().catch(() => {});
 
-  for(let i=0; i<20; i++) floatingHearts.push(new Heart());
+  // Jyada hearts background me
+  for(let i=0; i<45; i++) floatingHearts.push(new Heart());
 
   const isMobile = window.innerWidth < 600;
-  // Slow Tree Config
-  initTree(tCanvas.width / 2, tCanvas.height * 0.82, isMobile ? 65 : 100, -90, 10);
-  
+  // Ped thoda bada aur center me
+  const startX = tCanvas.width / 2;
+  const startY = tCanvas.height * 0.88;
+  const length = isMobile ? tCanvas.height * 0.12 : tCanvas.height * 0.18;
+
+  initTree(startX, startY, length, -90, isMobile ? 10 : 11);
   animate();
-  setTimeout(typeWriter, 1500); 
+  setTimeout(typeWriter, 2000); 
 }
 
 function initTree(x, y, len, angle, depth) {
@@ -136,54 +154,9 @@ function initTree(x, y, len, angle, depth) {
     let ny = y + Math.sin(rad) * len;
 
     tCtx.beginPath();
-    // Pink and Red Gradient effect
-    tCtx.strokeStyle = depth < 4 ? "#ff85a1" : (depth < 7 ? "#ff4d6d" : "#800020");
-    tCtx.lineWidth = depth * 0.8;
+    // Beautiful color transition
+    tCtx.strokeStyle = depth < 3 ? "#ff85a1" : (depth < 6 ? "#ff4d6d" : "#5e0012");
+    tCtx.lineWidth = depth * 1.2;
     tCtx.lineCap = "round";
-    tCtx.shadowBlur = 5;
-    tCtx.shadowColor = "#ff4d6d";
     tCtx.moveTo(x, y);
     tCtx.lineTo(nx, ny);
-    tCtx.stroke();
-
-    if (depth > 0) {
-      // Adding slightly more branches for a "fuller" tree
-      initTree(nx, ny, len * 0.75, angle - 25, depth - 1);
-      initTree(nx, ny, len * 0.75, angle + 25, depth - 1);
-    } else {
-      // Flowers at the end
-      tCtx.fillStyle = "#fff";
-      tCtx.beginPath();
-      tCtx.arc(nx, ny, 2, 0, Math.PI*2);
-      tCtx.fill();
-    }
-  });
-}
-
-function typeWriter() {
-  if (textIndex < message.length) {
-    document.getElementById("typewriter").textContent += message.charAt(textIndex);
-    textIndex++;
-    // Normal speed for "it's sweet", slow for "Anjali"
-    let speed = textIndex > 10 ? 250 : 150; 
-    setTimeout(typeWriter, speed);
-  } else {
-    document.getElementById("typewriter").style.borderRight = "none";
-  }
-}
-
-function animate() {
-  bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
-  floatingHearts.forEach(h => { h.update(); h.draw(); });
-
-  // SLOW TREE DRAWING: Only 1 branch per frame
-  if (treeQueue.length > 0) {
-    let drawBranch = treeQueue.shift();
-    drawBranch();
-  }
-
-  requestAnimationFrame(animate);
-}
-</script>
-</body>
-</html>
