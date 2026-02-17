@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-<title>Sweet Girl ❤️</title>
+<title>it's__sweet_girl❤️</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap');
 
@@ -13,59 +13,64 @@
     background: #000;
     overflow: hidden;
     touch-action: none;
+    -webkit-tap-highlight-color: transparent;
   }
 
-  canvas { position: absolute; top: 0; left: 0; }
+  canvas {
+    display: block;
+    position: absolute;
+    top: 0; left: 0;
+  }
 
-  /* Text ko center ke paas rakha hai */
+  /* Likhavat ko thoda niche aur center me rakha hai */
   #text-container {
     position: absolute;
-    top: 25%; 
+    bottom: 20%; 
     left: 0;
     width: 100%;
     text-align: center;
-    z-index: 50;
+    z-index: 100;
     pointer-events: none;
   }
 
   #typewriter {
     font-family: 'Dancing Script', cursive;
-    font-size: clamp(32px, 12vw, 55px);
-    color: #ffb3c1;
+    font-size: clamp(28px, 8vw, 45px);
+    color: #ff85a1; /* Pyara Pink Color */
     text-shadow: 0 0 15px #ff4d6d, 0 0 30px #ff0040;
     display: inline-block;
+    min-height: 1.2em;
   }
 
+  /* Start Screen jo pakka Tap kaam karega */
   #start-screen {
     position: fixed;
-    inset: 0;
-    background: radial-gradient(circle, #38000a 0%, #000 100%);
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: radial-gradient(circle, #200005 0%, #000 100%);
     color: #ff4d6d;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    z-index: 100;
-    text-align: center;
-  }
-
-  .heart-main {
-    font-size: 110px;
-    filter: drop-shadow(0 0 25px #ff0040);
-    animation: pulse 1.3s infinite ease-in-out;
+    z-index: 999;
     cursor: pointer;
   }
 
-  @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.2); } }
+  .heart-main {
+    font-size: 100px;
+    filter: drop-shadow(0 0 20px #ff0040);
+    animation: pulse 1.5s infinite ease-in-out;
+  }
+
+  @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
 
   .tap-text {
     font-family: sans-serif;
-    font-size: 16px;
-    letter-spacing: 4px;
-    margin-top: 40px;
-    font-weight: bold;
+    font-size: 14px;
+    letter-spacing: 3px;
+    margin-top: 30px;
     color: #ffb3c1;
-    text-shadow: 0 0 5px #ff4d6d;
   }
 </style>
 </head>
@@ -106,45 +111,54 @@ function resize() {
 window.addEventListener("resize", resize);
 resize();
 
+// Dher saare hearts aur sparkles
 class Heart {
-  constructor() { this.reset(); }
+  constructor() {
+    this.reset();
+  }
   reset() {
     this.x = Math.random() * bgCanvas.width;
-    this.y = bgCanvas.height + 50;
-    this.size = Math.random() * 18 + 10;
-    this.speedY = -(Math.random() * 1.5 + 0.8);
-    this.opacity = Math.random() * 0.8 + 0.2;
-    // Mix of different love symbols
-    const items = ["❤️", "💖", "✨", "🌸", "💕"];
-    this.char = items[Math.floor(Math.random() * items.length)];
+    this.y = bgCanvas.height + 20;
+    this.size = Math.random() * 15 + 8;
+    this.speedY = -(Math.random() * 1 + 0.5);
+    this.opacity = Math.random() * 0.7 + 0.3;
+    const icons = ["❤️", "💖", "✨", "🌸"];
+    this.icon = icons[Math.floor(Math.random() * icons.length)];
   }
   update() {
     this.y += this.speedY;
-    if (this.y < -50) this.reset();
+    if (this.y < -20) this.reset();
   }
   draw() {
     bgCtx.globalAlpha = this.opacity;
     bgCtx.font = `${this.size}px serif`;
-    bgCtx.fillText(this.char, this.x, this.y);
+    bgCtx.fillText(this.icon, this.x, this.y);
   }
 }
 
 function startExperience() {
-  document.getElementById("start-screen").style.display = "none";
+  // Screen hatane ka naya tarika taaki hang na ho
+  document.getElementById("start-screen").style.opacity = "0";
+  setTimeout(() => {
+    document.getElementById("start-screen").style.display = "none";
+  }, 500);
+
   document.getElementById("music").play().catch(() => {});
 
-  // Jyada hearts background me
-  for(let i=0; i<45; i++) floatingHearts.push(new Heart());
+  // 40 Hearts for better feel
+  for(let i=0; i<40; i++) floatingHearts.push(new Heart());
 
   const isMobile = window.innerWidth < 600;
-  // Ped thoda bada aur center me
-  const startX = tCanvas.width / 2;
-  const startY = tCanvas.height * 0.88;
-  const length = isMobile ? tCanvas.height * 0.12 : tCanvas.height * 0.18;
+  // Ped ab center se thoda niche shuru hoga
+  const treeX = tCanvas.width / 2;
+  const treeY = tCanvas.height * 0.85;
+  const branchLen = isMobile ? tCanvas.height * 0.12 : tCanvas.height * 0.18;
 
-  initTree(startX, startY, length, -90, isMobile ? 10 : 11);
+  // depth 11 matlab bahut ghana ped
+  initTree(treeX, treeY, branchLen, -90, 11);
+  
   animate();
-  setTimeout(typeWriter, 2000); 
+  setTimeout(typeWriter, 1500); 
 }
 
 function initTree(x, y, len, angle, depth) {
@@ -154,9 +168,7 @@ function initTree(x, y, len, angle, depth) {
     let ny = y + Math.sin(rad) * len;
 
     tCtx.beginPath();
-    // Beautiful color transition
-    tCtx.strokeStyle = depth < 3 ? "#ff85a1" : (depth < 6 ? "#ff4d6d" : "#5e0012");
-    tCtx.lineWidth = depth * 1.2;
-    tCtx.lineCap = "round";
-    tCtx.moveTo(x, y);
-    tCtx.lineTo(nx, ny);
+    // Pink, Red aur Dark Maroon ka mix
+    if(depth > 7) tCtx.strokeStyle = "#4a000e"; // Root
+    else if(depth > 4) tCtx.strokeStyle = "#ff0040"; // Mid
+    else tCtx.strokeStyle = "#ff85a1"; // Top
